@@ -1,0 +1,12 @@
+{
+  "name": "stemwijzer",
+  "displayName": "stemwijzer",
+  "expo": {
+    "name": "stemwijzer",
+    "slug": "stemwijzer",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
