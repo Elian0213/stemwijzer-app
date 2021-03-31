@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen } from './../screens/home';
 import { AboutScreen } from './../screens/about';
 import { QuestionsScreen } from './../screens/questions';
+import { ResultScreen } from './../screens/results';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -12,6 +13,7 @@ const HomeNavigator = () => (
     <Screen name='Home' component={HomeScreen}/>
     <Screen name='About' component={AboutScreen}/>
     <Screen name='Questions' component={QuestionsScreen}/>
+    <Screen name='Results' component={ResultScreen}/>
   </Navigator>
 );
 
