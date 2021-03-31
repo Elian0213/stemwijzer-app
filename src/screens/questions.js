@@ -1,26 +1,23 @@
 import React, { useState, useEffect  } from 'react';
 import { SafeAreaView, Image, View, StyleSheet } from 'react-native';
-import { Divider, Layout, Text, TopNavigation, TopNavigationAtion, Button, Spinner, Icon } from '@ui-kitten/components';
-import { BackIcon, CheckIcon, CrossIcon, MinusIcon } from './../components/icons'
-import { act } from 'react-test-renderer';
-
-const LeftIcon = (props) => (
-  <Icon {...props} name='arrow-back-outline'/>
-);
-
-const RightIcon = (props) => (
-  <Icon {...props} name='arrow-forward-outline'/>
-);
+import { Divider, Layout, Text, TopNavigation, TopNavigationAction, Button, Spinner  } from '@ui-kitten/components';
+import { BackIcon, LeftIcon, RightIcon } from './../components/icons'
+import ProgressBar from './../components/progressbar';
 
 export const QuestionsScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [responses, setResponse] = useState([]);
 
-  const navigateBack = () => navigation.goBack();
+  const [inPreviousState, setPreviousState] = useState(false);
 
   const answerAgree = () => navigation.goBack();
+
+  const BackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={() => navigation.goBack()}/>
+  );
 
   useEffect(() => {
     fetch("http://192.168.1.100:8000/api/getQuestions.php")
@@ -36,6 +33,22 @@ export const QuestionsScreen = ({ navigation }) => {
 
   const lastQuestion = () => currentQuestion == (questions.length - 1);
 
+  const getCurrentAnswer = () => {
+    if (responses.find(x => x.id === currentQuestion) !== undefined) {
+      return responses.find(x => x.id === currentQuestion).answer ?? true;
+    }
+
+    return true;
+  };
+
+  const checkPreviousState = (newState) => {
+    if (responses.find(x => x.id === newState) === undefined && !responses[currentQuestion]?.answer) {
+      setPreviousState(false);
+    } else {
+      setPreviousState(true);
+    }
+  }
+
   const respond = (response) => {
     if (responses.find(x => x.id === currentQuestion) === undefined) {
       setResponse([...responses, {
@@ -45,17 +58,27 @@ export const QuestionsScreen = ({ navigation }) => {
     } else {
       // Re-answer a already answered question
       const index = responses.findIndex(x => x.id === currentQuestion);
+      console.log(index);
       let temp = responses;
 
-      temp[index].answer = response;
+      temp[index] = {
+        id: currentQuestion,
+        answer: response
+      };
 
       setResponse(temp);
     }
 
     if (lastQuestion()) {
-      alert('finish')
-      console.log(responses)
+      if (responses.length == questions.length) {
+        alert('finish')
+        console.log(responses)
+      } else {
+        alert('Je hebt nog niet elke vraag beantwoord!')
+      }
     } else {
+      checkPreviousState(currentQuestion + 1)
+
       setCurrentQuestion(currentQuestion + 1)
     }
   }
@@ -63,8 +86,11 @@ export const QuestionsScreen = ({ navigation }) => {
   const questionNavigator = (action) => {
     if (action === 'previous' && currentQuestion !== 0) {
       setCurrentQuestion(currentQuestion - 1)
+      checkPreviousState(currentQuestion - 1);
     } else if (action === 'next' && !lastQuestion()) {
       setCurrentQuestion(currentQuestion + 1)
+
+      checkPreviousState(currentQuestion + 1)
     }
   }
 
@@ -79,9 +105,11 @@ export const QuestionsScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1 }} >
       <TopNavigation
-        title='Over de stemwijzer'
+        title='Stemwijzer vragenlijst'
+        subtitle={`Je zit op vraag ${currentQuestion +1 }/${questions.length}`}
         style={{ paddingTop: 0 }}
         alignment='center'
+        accessoryLeft={BackAction}
       />
       <Divider/>
       <Layout style={styles.container}>
@@ -90,23 +118,27 @@ export const QuestionsScreen = ({ navigation }) => {
           <Text style={styles.counter}>{currentQuestion + 1} / {questions.length}</Text>
           <Button accessoryRight={lastQuestion() ? null : RightIcon} onPress={() => questionNavigator('next')} appearance="ghost" status='basic'></Button>
         </View>
+        <ProgressBar totalQuestions={questions.length} currentQuestion={currentQuestion} />
         <View style={styles.questionContainer}>
-          <Text style={{ fontSize: 18}}>{questions[currentQuestion].question}</Text>
+          <Text style={styles.questionText}>{questions[currentQuestion].question}</Text>
         </View>
         <View style={styles.buttonContainer}>
           <Button
             size="giant"
             status="success"
+            appearance={ inPreviousState ? getCurrentAnswer() == true ? 'filled' : 'outline' : 'filled'}
             onPress={() => respond(true)}
           >Eens</Button>
           <Button
             size="giant"
             status="basic"
+            appearance={ inPreviousState ? getCurrentAnswer() == undefined ? 'filled' : 'outline' : 'filled'}
             onPress={() => respond(undefined)}
           >Geen mening</Button>
           <Button
             size="giant"
             status="danger"
+            appearance={ inPreviousState ? getCurrentAnswer() == false ? 'filled' : 'outline' : 'filled'}
             onPress={() => respond(false)}
           > Oneens</Button>
         </View>
@@ -132,10 +164,14 @@ const styles = StyleSheet.create({
   questionContainer: {
     maxWidth: '80%',
     marginTop: 18,
+    height: 120,
+  },
+  questionText: {
+    fontSize: 18,
     borderColor:'black',
     borderWidth:1,
     padding: 15,
-    borderRadius: 20
+    borderRadius: 20,
   },
   buttonContainer: {
     marginTop: 20,

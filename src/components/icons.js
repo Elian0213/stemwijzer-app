@@ -17,3 +17,11 @@ export const CrossIcon = (props) => (
 export const MinusIcon = (props) => (
   <Icon {...props} name='minus-outline' />
 );
+
+export const LeftIcon = (props) => (
+  <Icon {...props} name='arrow-back-outline'/>
+);
+
+export const RightIcon = (props) => (
+  <Icon {...props} name='arrow-forward-outline'/>
+);
