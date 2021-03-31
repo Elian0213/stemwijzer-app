@@ -21,11 +21,15 @@ export const AboutScreen = ({ navigation }) => {
       <TopNavigation title='Over de stemwijzer' style={{ paddingTop: 0 }} alignment='center' accessoryLeft={BackAction}/>
       <Divider/>
       <Layout style={styles.container}>
-        <Text style={styles.header}>Hoe het werkt</Text>
+        <Text style={styles.header}>Over de stemwijzer</Text>
         <Text style={{ maxWidth: '80%', fontSize: 18}}>
-          De <Text style={styles.highlight}>app</Text> is er om je te helpen in te zien welke partij jij past!. Op deze manier berijd jij je voor op de <Text style={{fontStyle: 'italic', fontSize: 18}}>aankomende verkiezingen</Text>, aangezien bij elke verkiezingen weer nieuwe partijen worden opgericht.
-          {"\n\n"}
-          In deze <Text style={styles.highlight}>app</Text> maak je een kleine vragenlijst met stellingen waar je <Text style={{fontWeight: 'bold', fontSize: 18, color: 'green'}}>eens</Text>, <Text style={{fontWeight: 'bold', fontSize: 18, color: 'red'}}>oneens</Text> en <Text style={{fontWeight: 'bold', fontSize: 18, color: 'grey'}}>geen mening</Text> op kan antwoorden. Door deze antwoorden wordt er vergeleken met wat de partijen vinden over deze stellingen.
+          Bij iedere verkiezing worden weer nieuwe partijen opgericht. Met deze <Text style={styles.highlight}>stemwijzer</Text> helpen we jou om te  onderzoeken welke partij bij jou past!
+        </Text>
+          <Text style={styles.header2}>Hoe werkt het?</Text>
+        <Text style={{ maxWidth: '80%', fontSize: 18}}>
+          In deze app geven we jou een aantal korte stellingen waar je <Text style={{fontWeight: 'bold', fontSize: 18, color: 'green'}}>eens</Text>, <Text style={{fontWeight: 'bold', fontSize: 18, color: 'red'}}>oneens</Text> of <Text style={{fontWeight: 'bold', fontSize: 18, color: 'grey'}}>geen mening</Text> op kan antwoorden.
+          {'\n\n'}
+          Jouw antwoorden worden vergeleken met de <Text style={styles.italic}>verkiezingsprogramma’s</Text> van alle partijen die deelnemen aan de komende verkiezingen.
         </Text>
         <Image style={styles.bottomImage} source={require('./../assets/vote.png')} />
       </Layout>
@@ -41,9 +45,16 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 23.76,
-    marginTop: 80,
     fontSize: 35,
     fontWeight: 'bold',
+    marginTop: 80,
+    color: "#636363"
+  },
+  header2: {
+    marginBottom: 23.76,
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginTop: 25,
     color: "#636363"
   },
   highlight: {
@@ -51,11 +62,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'orange'
   },
+  italic: {
+    fontStyle: 'italic',
+    fontSize: 18,
+  },
   bottomImage: {
     position: 'absolute',
     bottom: -120,
     right: -100,
-    opacity: 0.2,
+    opacity: 0.1,
     zIndex: -1
   }
 });
