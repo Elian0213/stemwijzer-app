@@ -20,7 +20,7 @@ export const QuestionsScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    fetch("http://192.168.1.100:8000/api/getQuestions.php")
+    fetch("http://192.168.0.143:8000/api/app/questions.php?all")
     .then(response => response.json())
     .then(response => {
       setQuestions(response);
@@ -55,10 +55,15 @@ export const QuestionsScreen = ({ navigation }) => {
         id: currentQuestion,
         answer: response
       }]);
+
+      nextOrDone([...responses, {
+        id: currentQuestion,
+        answer: response
+      }]);
     } else {
       // Re-answer a already answered question
       const index = responses.findIndex(x => x.id === currentQuestion);
-      console.log(index);
+
       let temp = responses;
 
       temp[index] = {
@@ -67,12 +72,22 @@ export const QuestionsScreen = ({ navigation }) => {
       };
 
       setResponse(temp);
+      nextOrDone(temp);
     }
+  }
 
+  const nextOrDone = (currentResponses) => {
     if (lastQuestion()) {
-      if (responses.length == questions.length) {
-        alert('finish')
-        console.log(responses)
+      if (currentResponses.length == questions.length || responses.length == questions.length) {
+        const finalData = currentResponses.map((response) => {
+          response.id += 1;
+          return response;
+        });
+
+        // Navigate to results with the response data.
+        navigation.navigate('Results', {
+          responses: finalData,
+        });
       } else {
         alert('Je hebt nog niet elke vraag beantwoord!')
       }

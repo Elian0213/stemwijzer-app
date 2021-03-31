@@ -1,64 +1,81 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, Image, StyleSheet, View } from 'react-native';
-import { Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Card, Avatar } from '@ui-kitten/components';
+import { Divider, Icon, Layout, Text, TopNavigation, Card, Spinner, Button } from '@ui-kitten/components';
 
 const BackIcon = (props) => (
   <Icon {...props} name='arrow-back' />
 );
 
-const Header = (partyName, imageSrc) => (
+const Header = (imgSource, number) => (
   <View style={styles.cardHeader}>
-    <Text category='h6'>{partyName}</Text>
-    <Avatar style={styles.avatar} size='giant' source={{
-      uri: imageSrc
-    }}/>
+    <Text style={styles.numberRank}>{number + 1}.</Text>
+    <Image style={styles.partyImage} source={{
+      uri: imgSource
+    }} />
   </View>
 );
 
-export const ResultScreen = ({ navigation }) => {
-  const result = [
-    {
-      "id": "3",
-      "politicParty": "PVV",
-      "distance": 2,
-      "distancePercent": 85.85786437626905,
-      "image": "src/img/pvv.png"
-    },
-    {
-      "id": "1",
-      "politicParty": "VVD",
-      "distance": 4.123105625617661,
-      "distancePercent": 70.84524052577349,
-      "image": "src/img/vvd.png"
-    },
-    {
-      "id": "6",
-      "politicParty": "FVD",
-      "distance": 4.123105625617661,
-      "distancePercent": 70.84524052577349,
-      "image": "src/img/fvd.png"
-    }
-  ];
+export const ResultScreen = ({ route, navigation }) => {
+  const [ result, setResult ] = useState();
+  const [ isLoading, setIsLoading ] = useState(true);
+  const { responses } = route.params;
 
   const navigateBack = () => {
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
-  const BackAction = () => (
-    <TopNavigationAction icon={BackIcon} onPress={navigateBack}/>
-  );
+  useEffect(() => {
+    const form = new FormData()
+
+    form.append('calculate')
+    form.append("data", JSON.stringify(responses))
+
+    fetch('http://192.168.0.143:8000/api/app/answer.php', {
+      method: "POST",
+      body: form,
+      redirect: 'follow'
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setResult(data);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+    })
+    .catch((err) => console.log(err));
+  }, [])
+
+  if (isLoading) {
+    return (
+      <Layout style={styles.centerInBox}>
+        <Spinner size='giant' />
+        <Text style={styles.waitText}>Even geduld a.u.b...</Text>
+      </Layout>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <TopNavigation title='Resultaat van de Stemwijzer' style={{ paddingTop: 0 }} alignment='center' accessoryLeft={BackAction}/>
+      <TopNavigation
+        title='Results are in!'
+        style={{ paddingTop: 0 }}
+        alignment='center'
+        subtitle='Het resultaat van de stemwijzer'
+      />
       <Divider/>
       <Layout style={styles.container}>
         <Text style={styles.header}>Resultaat</Text>
-        {result.map((party) => (
-          <Card header={() => Header(party.politicParty, `http://192.168.1.100:8000/${party.image}`)}>
-            <Text>wag1</Text>
+        {result.map((party, index) => (
+          <Card style={styles.card} key={party.id} header={() => Header(`http://192.168.0.143:8000/${party.image}`, index)}>
+            <Text>Je hebt <Text style={styles.percentage}>{(party.distancePercent).toFixed(2)}%</Text> gescoort bij de partij</Text>
+            <Text style={styles.partyName}>{party.politicParty}</Text>
           </Card>
         ))}
+
+      <Button onPress={navigateBack}>
+        Nog een keer!
+      </Button>
+
         <Image style={styles.bottomImage} source={require('./../assets/statistics.png')} />
       </Layout>
     </SafeAreaView>
@@ -73,10 +90,13 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 23.76,
-    marginTop: 80,
+    marginTop: 30,
     fontSize: 35,
     fontWeight: 'bold',
     color: "#636363"
+  },
+  card: {
+    marginBottom: 25,
   },
   bottomImage: {
     position: 'absolute',
@@ -86,6 +106,44 @@ const styles = StyleSheet.create({
     zIndex: -1
   },
   cardHeader: {
-    padding: 10
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  partyImage: {
+    width: 75,
+    padding: 20,
+    height: 75,
+    resizeMode: 'contain'
+  },
+  percentage: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'blue',
+  },
+  numberRank: {
+    marginRight: 30,
+    color: '#383838',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 35,
+  },
+  partyName: {
+    marginTop: 20,
+    fontWeight: 'bold',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  centerInBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  waitText: {
+    fontSize: 20,
+    marginTop: 20,
   }
 });
