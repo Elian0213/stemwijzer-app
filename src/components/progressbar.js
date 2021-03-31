@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { View, StyleSheet } from 'react-native';
-import { useState } from 'react/cjs/react.development';
 
 export default function ProgressBar({ totalQuestions, currentQuestion }) {
   const [colorBar, setColor] = useState();

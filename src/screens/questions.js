@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Image, View, StyleSheet } from 'react-native';
 import { Divider, Layout, Text, TopNavigation, TopNavigationAction, Button, Spinner  } from '@ui-kitten/components';
 import { BackIcon, LeftIcon, RightIcon } from './../components/icons'

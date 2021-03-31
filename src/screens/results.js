@@ -66,7 +66,7 @@ export const ResultScreen = ({ route, navigation }) => {
       <Layout style={styles.container}>
         <Text style={styles.header}>Resultaat</Text>
         {result.map((party, index) => (
-          <Card style={styles.card} key={party.id} header={() => Header(`http://192.168.0.143:8000/${party.image}`, index)}>
+          <Card style={styles.card} key={party.id} header={() => Header(`https://elian.app/${party.image}`, index)}>
             <Text>Je hebt <Text style={styles.percentage}>{(party.distancePercent).toFixed(2)}%</Text> gescoort bij de partij</Text>
             <Text style={styles.partyName}>{party.politicParty}</Text>
           </Card>
