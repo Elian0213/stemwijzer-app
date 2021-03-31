@@ -30,7 +30,7 @@ export const ResultScreen = ({ route, navigation }) => {
     form.append('calculate')
     form.append("data", JSON.stringify(responses))
 
-    fetch('http://192.168.0.143:8000/api/app/answer.php', {
+    fetch('https://elian.app/api/app/answer.php', {
       method: "POST",
       body: form,
       redirect: 'follow'

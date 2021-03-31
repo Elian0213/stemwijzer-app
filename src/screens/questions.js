@@ -20,7 +20,7 @@ export const QuestionsScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    fetch("http://192.168.0.143:8000/api/app/questions.php?all")
+    fetch("https://elian.app/api/app/questions.php?all")
     .then(response => response.json())
     .then(response => {
       setQuestions(response);
