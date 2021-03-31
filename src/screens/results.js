@@ -55,7 +55,7 @@ export const ResultScreen = ({ navigation }) => {
       <Layout style={styles.container}>
         <Text style={styles.header}>Resultaat</Text>
         {result.map((party) => (
-          <Card header={() => Header(party.politicParty, `http://192.168.0.143:8000/${party.image}`)}>
+          <Card header={() => Header(party.politicParty, `http://192.168.1.100:8000/${party.image}`)}>
             <Text>wag1</Text>
           </Card>
         ))}

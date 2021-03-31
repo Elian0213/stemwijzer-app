@@ -12,7 +12,7 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   const navigateQuestions = () => {
-    navigation.navigate('Results');
+    navigation.navigate('Questions');
   };
 
   return (
