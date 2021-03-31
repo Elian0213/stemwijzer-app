@@ -35,7 +35,7 @@ export const QuestionsScreen = ({ navigation }) => {
 
   const getCurrentAnswer = () => {
     if (responses.find(x => x.id === currentQuestion) !== undefined) {
-      return responses.find(x => x.id === currentQuestion).answer ?? true;
+      return responses.find(x => x.id === currentQuestion).answer;
     }
 
     return true;
