@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
+    // overflow: 'scroll'
   },
   header: {
     marginBottom: 23.76,
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     color: "#636363"
   },
   card: {
-    marginBottom: 25,
+    marginBottom: 5,
   },
   bottomImage: {
     position: 'absolute',
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     zIndex: -1
   },
   cardHeader: {
-    padding: 10,
+    padding: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
   },
   partyName: {
-    marginTop: 20,
+    marginTop: 10,
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
