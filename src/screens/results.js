@@ -1,150 +1,196 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Image, StyleSheet, View } from 'react-native';
-import { Divider, Icon, Layout, Text, TopNavigation, Card, Spinner, Button } from '@ui-kitten/components';
+import React, { useEffect, useState } from "react";
+import {
+  SafeAreaView,
+  Image,
+  StyleSheet,
+  View,
+  ScrollView,
+  StatusBar,
+} from "react-native";
+import {
+  Divider,
+  Icon,
+  Layout,
+  Text,
+  TopNavigation,
+  Card,
+  Spinner,
+  Button,
+} from "@ui-kitten/components";
 
-const BackIcon = (props) => (
-  <Icon {...props} name='arrow-back' />
-);
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 const Header = (imgSource, number) => (
   <View style={styles.cardHeader}>
     <Text style={styles.numberRank}>{number + 1}.</Text>
-    <Image style={styles.partyImage} source={{
-      uri: imgSource
-    }} />
+    <Image
+      style={styles.partyImage}
+      source={{
+        uri: imgSource,
+      }}
+    />
   </View>
 );
 
 export const ResultScreen = ({ route, navigation }) => {
-  const [ result, setResult ] = useState();
-  const [ isLoading, setIsLoading ] = useState(true);
+  const [result, setResult] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const { responses } = route.params;
 
   const navigateBack = () => {
-    navigation.navigate('Home');
+    navigation.navigate("Home");
   };
 
   useEffect(() => {
-    const form = new FormData()
+    const form = new FormData();
 
-    form.append('calculate')
-    form.append("data", JSON.stringify(responses))
+    form.append("calculate");
+    form.append("data", JSON.stringify(responses));
 
-    fetch('https://elian.app/api/app/answer.php', {
+    fetch("https://elian.app/api/app/answer.php", {
       method: "POST",
       body: form,
-      redirect: 'follow'
+      redirect: "follow",
     })
-    .then((response) => response.json())
-    .then((data) => {
-      setResult(data);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    })
-    .catch((err) => console.log(err));
-  }, [])
+      .then((response) => response.json())
+      .then((data) => {
+        setResult(data);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   if (isLoading) {
     return (
       <Layout style={styles.centerInBox}>
-        <Spinner size='giant' />
+        <Spinner size="giant" />
         <Text style={styles.waitText}>Even geduld a.u.b...</Text>
       </Layout>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <TopNavigation
-        title='Results are in!'
-        style={{ paddingTop: 0 }}
-        alignment='center'
-        subtitle='Het resultaat van de stemwijzer'
-      />
-      <Divider/>
-      <Layout style={styles.container}>
-        <Text style={styles.header}>Resultaat</Text>
-        {result.map((party, index) => (
-          <Card style={styles.card} key={party.id} header={() => Header(`https://elian.app/${party.image}`, index)}>
-            <Text>Je hebt <Text style={styles.percentage}>{(party.distancePercent).toFixed(2)}%</Text> gescoort bij de partij</Text>
-            <Text style={styles.partyName}>{party.politicParty}</Text>
-          </Card>
-        ))}
+    <ScrollView style={styles.scrollBox}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TopNavigation
+          title="Results are in!"
+          style={{ paddingTop: 0 }}
+          alignment="center"
+          subtitle="Het resultaat van de stemwijzer"
+        />
+        <Divider />
+        <Layout style={styles.container}>
+          <Text style={styles.header}>Resultaat</Text>
+          {result.map((party, index) => (
+            <Card
+              style={styles.card}
+              key={party.id}
+              header={() => Header(`https://elian.app/${party.image}`, index)}
+            >
+              <Text>
+                Je hebt{" "}
+                <Text style={styles.percentage}>
+                  {party.distancePercent.toFixed(2)}%
+                </Text>{" "}
+                gescoort bij de partij
+              </Text>
+              <Text style={styles.partyName}>{party.politicParty}</Text>
+            </Card>
+          ))}
 
-      <Button onPress={navigateBack}>
-        Nog een keer!
-      </Button>
+          <Button onPress={navigateBack} style={styles.bottomButton}>Nog een keer!</Button>
 
-        <Image style={styles.bottomImage} source={require('./../assets/statistics.png')} />
-      </Layout>
-    </SafeAreaView>
+          <Image
+            style={styles.bottomImage}
+            source={require("./../assets/statistics.png")}
+          />
+        </Layout>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollBox: {
+    paddingTop: 10,
+    marginBottom: 10,
+  },
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: StatusBar.currentHeight,
     // overflow: 'scroll'
   },
   header: {
     marginBottom: 23.76,
     marginTop: 30,
     fontSize: 35,
-    fontWeight: 'bold',
-    color: "#636363"
+    fontWeight: "bold",
+    color: "#636363",
   },
   card: {
     marginBottom: 5,
   },
   bottomImage: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -120,
     right: -100,
     opacity: 0.2,
-    zIndex: -1
+    zIndex: -1,
   },
   cardHeader: {
     padding: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   partyImage: {
     width: 75,
     padding: 20,
     height: 75,
-    resizeMode: 'contain'
+    resizeMode: "contain",
   },
   percentage: {
     fontSize: 15,
-    fontWeight: 'bold',
-    color: 'blue',
+    fontWeight: "bold",
+    color: "blue",
   },
   numberRank: {
     marginRight: 30,
-    color: '#383838',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#383838",
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 35,
   },
   partyName: {
-    marginTop: 10,
-    fontWeight: 'bold',
+    marginTop: 20,
+    fontWeight: "bold",
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   centerInBox: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    width: '100%',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    width: "100%",
   },
   waitText: {
     fontSize: 20,
     marginTop: 20,
+  },
+  scrollView: {
+    backgroundColor: "pink",
+    marginHorizontal: 20,
+  },
+  text: {
+    fontSize: 42,
+  },
+  bottomButton: {
+    marginTop: 10,
+    marginBottom: 75,
   }
 });
